@@ -34,7 +34,7 @@ public class SimpleLineChartView extends AbstractChartView {
         LineChartConfig lineConfig = new LineChartConfig();
 
         List<String> lbs = new ArrayList<>();
-        JSONArray jsonArray = new JSONArray(bancoService.findJson());
+        JSONArray jsonArray = new JSONArray(bancoService.findJson(1));
 
         for(int i = 0; i < jsonArray.length(); i++){
             lbs.add(jsonArray.getJSONObject(i).get("data").toString());
@@ -43,7 +43,7 @@ public class SimpleLineChartView extends AbstractChartView {
         lineConfig.data()
             //.labels("01/01/1991", "01/02/1991", "01/03/1991", "01/04/1991", "01/05/1991", "01/06/1991", "01/07/1991")
             .labelsAsList(lbs)
-            .addDataset(new LineDataset().label(bancoService.findDataset()).fill(false))
+            .addDataset(new LineDataset().label(bancoService.findDataset(1)).fill(false))
             //.addDataset(new LineDataset().label("My Second dataset").fill(false))
             //.addDataset(new LineDataset().label("Hidden dataset").hidden(true))
             .and()
@@ -51,7 +51,7 @@ public class SimpleLineChartView extends AbstractChartView {
             .responsive(true)
             .title()
             .display(true)
-            .text(bancoService.findTitulo())
+            .text(bancoService.findTitulo(1))
             .and()
         .tooltips()
             .mode(InteractionMode.INDEX)

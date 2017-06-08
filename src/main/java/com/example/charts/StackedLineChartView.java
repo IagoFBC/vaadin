@@ -36,7 +36,7 @@ public class StackedLineChartView extends AbstractChartView {
         LineChartConfig lineConfig = new LineChartConfig();
 
         List<String> lbs = new ArrayList<>();
-        JSONArray jsonArray = new JSONArray(bancoService.findJson());
+        JSONArray jsonArray = new JSONArray(bancoService.findJson(1));
 
         for(int i = 0; i < jsonArray.length(); i++){
             lbs.add(jsonArray.getJSONObject(i).get("data").toString());
@@ -44,13 +44,13 @@ public class StackedLineChartView extends AbstractChartView {
 
         lineConfig.data()
             .labelsAsList(lbs)
-            .addDataset(new LineDataset().label(bancoService.findDataset()).borderColor(DemoUtils.RGB_RED).backgroundColor(DemoUtils.RGB_RED))
+            .addDataset(new LineDataset().label(bancoService.findDataset(1)).borderColor(DemoUtils.RGB_RED).backgroundColor(DemoUtils.RGB_RED))
             .and()
         .options()
             .responsive(true)
             .title()
                 .display(true)
-                .text(bancoService.findTitulo())
+                .text(bancoService.findTitulo(1))
                 .and()
             .tooltips()
                 .mode(InteractionMode.INDEX)

@@ -11,6 +11,11 @@ public class OrgaoModel {
     public OrgaoModel() {
     }
 
+    public OrgaoModel(int id_org, String nome) {
+        this.id_org = id_org;
+        this.nome = nome;
+    }
+
     public OrgaoModel(int id_org, String nome, String sigla, String descricao, String tag) {
         this.id_org = id_org;
         this.nome = nome;

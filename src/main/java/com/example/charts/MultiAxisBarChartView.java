@@ -36,7 +36,7 @@ public class MultiAxisBarChartView extends AbstractChartView {
         BarChartConfig barConfig = new BarChartConfig();
 
         List<String> lbs = new ArrayList<>();
-        JSONArray jsonArray = new JSONArray(bancoService.findJson());
+        JSONArray jsonArray = new JSONArray(bancoService.findJson(1));
 
         for(int i = 0; i < jsonArray.length(); i++){
             lbs.add(jsonArray.getJSONObject(i).get("data").toString());
@@ -45,7 +45,7 @@ public class MultiAxisBarChartView extends AbstractChartView {
         barConfig.
             data()
                 .labelsAsList(lbs)
-                .addDataset(new BarDataset().backgroundColor("rgba(220,220,220,0.5)").label(bancoService.findDataset()).yAxisID("y-axis-1"))
+                .addDataset(new BarDataset().backgroundColor("rgba(220,220,220,0.5)").label(bancoService.findDataset(1)).yAxisID("y-axis-1"))
                 .and();
         barConfig.
             options()
@@ -57,7 +57,7 @@ public class MultiAxisBarChartView extends AbstractChartView {
                     .and()
                 .title()
                     .display(true)
-                    .text(bancoService.findTitulo())
+                    .text(bancoService.findTitulo(1))
                     .and()
                 .elements()
                     .rectangle()

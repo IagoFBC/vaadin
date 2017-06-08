@@ -14,7 +14,9 @@ public interface BancoService {
 
     @Results({
             @Result(property = "nome", column = "torg_nome"),
-            @Result(property = "id", column = "torg_seq")
+            @Result(property = "id", column = "torg_seq"),
+            @Result(property = "nomeConjunto", column = "tcod_nome"),
+            @Result(property = "idConjunto", column = "tcod_seq")
     })
 
     @Select("SELECT TORG_NOME FROM TB_ORGAO")
@@ -29,13 +31,16 @@ public interface BancoService {
     @Select("SELECT TCOD_NOME FROM TB_CONJUNTO_DADOS WHERE TORG_SEQ = #{id}")
     List<String> findNameConjunto(int id);
 
-    @Select("SELECT TCOD_NOME FROM TB_CONJUNTO_DADOS WHERE TCOD_SEQ = 1")
-    String findTitulo();
+    @Select("SELECT TCOD_SEQ FROM TB_CONJUNTO_DADOS WHERE TCOD_NOME = #{nomeConjunto}")
+    int findIdConjuntoByName(String nomeConjunto);
 
-    @Select("SELECT TCOD_JSON FROM TB_CONJUNTO_DADOS WHERE TCOD_SEQ = 1")
-    String findJson();
+    @Select("SELECT TCOD_NOME FROM TB_CONJUNTO_DADOS WHERE TCOD_SEQ = #{idConjunto}")
+    String findTitulo(int idConjunto);
 
-    @Select("SELECT TCOD_DATASET FROM TB_CONJUNTO_DADOS WHERE TCOD_SEQ = 1")
-    String findDataset();
+    @Select("SELECT TCOD_JSON FROM TB_CONJUNTO_DADOS WHERE TCOD_SEQ = #{idConjunto}")
+    String findJson(int idConjunto);
+
+    @Select("SELECT TCOD_DATASET FROM TB_CONJUNTO_DADOS WHERE TCOD_SEQ = #{idConjunto}")
+    String findDataset(int idConjunto);
 
 }

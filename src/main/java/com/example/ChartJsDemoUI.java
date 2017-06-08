@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.charts.*;
+import com.vaadin.data.Property;
 import com.vaadin.ui.*;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
@@ -33,7 +35,7 @@ import de.java2html.options.JavaSourceConversionOptions;
 import de.java2html.util.IllegalConfigurationException;
 
 @Theme("chartjs")
-@SpringUI
+@SpringUI(path = "graficos")
 public class ChartJsDemoUI extends UI {
 
     private static final long serialVersionUID = -33887281222947647L;
@@ -86,6 +88,13 @@ public class ChartJsDemoUI extends UI {
 
     private Link codeLink;
 
+    private JSONArray json;
+    private String titulo;
+    private String dataset;
+    private int seq;
+
+    public ObjetoUnico objetoUnico;
+
     @SuppressWarnings("serial")
     @Override
     protected void init(VaadinRequest request) {
@@ -113,37 +122,79 @@ public class ChartJsDemoUI extends UI {
         infoBar.setWidth(100, Unit.PERCENTAGE);
         infoBar.setSpacing(true);
         infoBar.addStyleName("addon-info-bar");
-        //vl.addComponent(infoBar); Lucas, comentei
 
-        String resultNomeOrgao;
         ComboBox combobox = new ComboBox("Selecione o orgão :");
 
+        String resultNomeOrgao;
+
         //Lucas, inseri o combobox aqui
-        combobox.setInputPrompt("Instituto Brasileiro de Geografia e Estatistica");
+        combobox.setInputPrompt("Selecione");//"Banco Central do Brasil");
+        //combobox.addItem("Selecione");
         combobox.addItems(bancoService.findNomeOrgao());
-
         combobox.setWidth(65, Unit.PERCENTAGE);
-
         combobox.setNullSelectionAllowed(false);
-
-        combobox.addValueChangeListener(valueChangeEvent -> Notification.show("Escolheu ", Notification.Type.TRAY_NOTIFICATION));
+        //combobox.addValueChangeListener(valueChangeEvent -> Notification.show("Escolheu ", Notification.Type.TRAY_NOTIFICATION));
 
         ComboBox combobox2 = new ComboBox("Selecione o conjunto de dados :");
-
-        resultNomeOrgao = combobox.getInputPrompt();
-
-        combobox2.addItem("Selecione");
-        combobox2.addItems( bancoService.findNameConjunto(bancoService.findIdOrgaoByName(resultNomeOrgao)));
-
+        combobox2.setInputPrompt("Selecione");
         combobox2.setWidth(65, Unit.PERCENTAGE);
-
         combobox2.setNullSelectionAllowed(false);
+        combobox2.setTextInputAllowed(false);
+
+        String[] escolhe = new String[2];
+
+
+        combobox.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                Notification.show("Escolheu ", event.getProperty().getValue().toString(), Notification.Type.TRAY_NOTIFICATION);
+
+                escolhe[0] = null;
+                escolhe[1] = null;
+
+                escolhe[0] = event.getProperty().getValue().toString();
+
+                combobox2.setTextInputAllowed(true);
+                combobox2.removeAllItems();
+                combobox2.addItems(bancoService.findNameConjunto(bancoService.findIdOrgaoByName(escolhe[0])));
+
+                if(combobox2.isEmpty())
+                    combobox2.setTextInputAllowed(false);
+            }
+        });
+
+        combobox2.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                escolhe[1] = event.getProperty().getValue().toString();
+            }
+        });
+
+
 
         Button confirma = new Button("OK");
 
-        confirma.addStyleName("friendly");
+        confirma.setDescription("Confirmar");
+
+
+
+        confirma.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                //Notification.show("Conjunto do ", escolhe[0] + ", Conjunto: " + escolhe[1], Notification.Type.TRAY_NOTIFICATION);
+                seq = bancoService.findIdConjuntoByName(escolhe[1]);
+
+                json = new JSONArray(bancoService.findJson(seq));
+                titulo = bancoService.findTitulo(seq);
+                dataset = bancoService.findDataset(seq);
+
+                objetoUnico = objetoUnico.getInstancia(json, titulo, dataset);
+                //Notification.show("", Integer.toString(bancoService.findIdConjuntoByName(escolhe[1])), Notification.Type.TRAY_NOTIFICATION);
+            }
+        });
 
         infoBar.addComponents(combobox, combobox2, confirma);
+
         vl.addComponent(infoBar);
 
         HorizontalSplitPanel splitContentCode = new HorizontalSplitPanel();
